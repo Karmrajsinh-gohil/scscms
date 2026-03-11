@@ -1,0 +1,13 @@
+.stat-card{
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.stat-card:hover{
+    transform:scale(1.05);
+}
+
+h2{
+    font-weight:600;
+}
