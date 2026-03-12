@@ -66,3 +66,22 @@ mat-card-actions {
 .register-link a:hover {
   text-decoration: underline;
 }
+
+.logo-section{
+  display:flex;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.login-logo{
+  height:80px;
+  width:auto;
+}
+
+.full-width{
+  width:100%;
+}
+
+.login-btn{
+  margin-top:15px;
+}

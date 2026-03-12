@@ -22,3 +22,73 @@ a {
 a:hover {
   text-decoration: underline;
 }
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.logo-img {
+  height: 35px;
+  margin-right: 10px;
+}
+
+.spacer {
+  flex: 1;
+}
+.navbar{
+  padding: 0 20px;
+}
+
+/* Logo Section */
+.logo-container{
+  display: flex;
+  align-items: center;
+}
+
+.logo-img{
+  height: 45px;
+  margin-right: 12px;
+}
+
+/* Title */
+.title-group{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.system-title{
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.system-subtitle{
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Navigation Links */
+.nav-links a{
+  font-size: 14px;
+  margin: 0 6px;
+}
+
+/* Spacer */
+.spacer{
+  flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 900px){
+
+  .system-subtitle{
+    display:none;
+  }
+
+  .nav-links a{
+    font-size:12px;
+  }
+
+}
