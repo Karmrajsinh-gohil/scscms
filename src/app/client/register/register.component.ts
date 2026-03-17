@@ -8,12 +8,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
-// custom validator to match password and confirm password
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+
+
+// Custom validator to match password and confirm password
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl) => {
   const password = control.get('password');
   const confirm = control.get('confirmPassword');
-  return password && confirm && password.value === confirm.value ? null : { passwordMismatch: true };
+
+  if (password && confirm && password.value !== confirm.value) {
+    return { passwordMismatch: true };
+  }
+
+  return null;
 };
+
 
 @Component({
   selector: 'app-register',
@@ -29,14 +39,21 @@ export const passwordMatchValidator: ValidatorFn = (control: AbstractControl) =>
     RouterLink
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
+
   registerForm: FormGroup;
+
   hidePassword = true;
   hideConfirm = true;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: Auth,
+    private firestore: Firestore
+  ) {
+
     this.registerForm = this.fb.group(
       {
         fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -46,20 +63,61 @@ export class RegisterComponent {
       },
       { validators: passwordMatchValidator }
     );
+
   }
 
-  onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Registration data:', this.registerForm.value);
-      // TODO: Implement registration logic (Firebase Auth / backend API)
+
+  async onSubmit() {
+
+    if (this.registerForm.invalid) {
+      return;
     }
+
+    const fullName = this.registerForm.value.fullName;
+    const email = this.registerForm.value.email;
+    const password = this.registerForm.value.password;
+
+    try {
+
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
+
+      const uid = userCredential.user.uid;
+
+      // Save extra user data in Firestore
+      await setDoc(doc(this.firestore, "users", uid), {
+        fullName: fullName,
+        email: email,
+        role: "citizen",
+        createdAt: new Date()
+      });
+
+      alert("Registration Successful!");
+
+      console.log("User Registered:", userCredential.user);
+
+      this.registerForm.reset();
+
+    } catch (error: any) {
+
+      console.error("Firebase Error:", error);
+      alert(error.message);
+
+    }
+
   }
+
 
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }
 
+
   toggleConfirmVisibility() {
     this.hideConfirm = !this.hideConfirm;
   }
+
 }
