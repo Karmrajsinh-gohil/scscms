@@ -1,24 +1,34 @@
 import { Routes } from '@angular/router';
+import { LoginComponent } from './client/login/login.component';
+import { DashboardComponent } from './client/dashboard/dashboard.component';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
+import { HomeComponent } from './visitor/home/home.component';
+import { RegisterComponent } from './client/register/register.component';
 
 export const routes: Routes = [
-  { 
-    path: '', 
-    loadComponent: () => import('./visitor/home/home.component').then(m => m.HomeComponent) 
-  },
-  { 
-    path: 'login', 
-    loadComponent: () => import('./client/login/login.component').then(m => m.LoginComponent) 
-  },
-  { 
-    path: 'register', 
-    loadComponent: () => import('./client/register/register.component').then(m => m.RegisterComponent) 
-  },
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path:'home',component:HomeComponent },
+  { path:'register',component:RegisterComponent },
+  { path: 'login', component: LoginComponent },
+
+  // USER DASHBOARD
   {
     path: 'dashboard',
-    loadComponent: () => import('./client/dashboard/dashboard.component').then(m => m.DashboardComponent)
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    data: { role: 'user' },
   },
+
+  // ADMIN DASHBOARD
   {
-    path: 'submit-complaint',
-    loadComponent: () => import('./client/submit-complaint/submit-complaint.component').then(m => m.SubmitComplaintComponent)
-  }
+    path: 'admin-dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'admin' }
+  },
+
+  { path: '**', redirectTo: 'login' }
+
 ];
