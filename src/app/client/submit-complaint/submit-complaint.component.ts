@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { ComplaintService } from '../../services/complaint.service';
+import { CreateComplaintRequest } from '../../core/models/complaint.model';
 
 @Component({
   selector: 'app-submit-complaint',
@@ -10,39 +13,47 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./submit-complaint.component.css']
 })
 export class SubmitComplaintComponent {
-
-  complaint = {
+  complaint: CreateComplaintRequest = {
     category: '',
     department: '',
     title: '',
     description: '',
-    location: '',
-    image: null
+    location: ''
   };
 
+  isSubmitting = false;
+
   categories = [
-    "Road Damage",
-    "Garbage Collection",
-    "Water Supply",
-    "Electricity Issue",
-    "Street Light Problem",
-    "Public Cleanliness"
+    'Road Damage',
+    'Garbage Collection',
+    'Water Supply',
+    'Electricity Issue',
+    'Street Light Problem',
+    'Public Cleanliness'
   ];
 
   departments = [
-    "Municipal Corporation",
-    "Water Department",
-    "Electricity Department",
-    "Public Works Department"
+    'Municipal Corporation',
+    'Water Department',
+    'Electricity Department',
+    'Public Works Department'
   ];
 
-  onFileSelected(event: any) {
-    this.complaint.image = event.target.files[0];
-  }
+  constructor(private complaintService: ComplaintService, private router: Router) {}
 
   submitComplaint() {
-    console.log("Complaint Submitted:", this.complaint);
-    alert("Complaint Submitted Successfully!");
-  }
+    this.isSubmitting = true;
 
+    this.complaintService.createComplaint(this.complaint).subscribe({
+      next: () => {
+        alert('Complaint submitted successfully.');
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error(error);
+        alert('Failed to submit complaint. Please try again.');
+        this.isSubmitting = false;
+      }
+    });
+  }
 }

@@ -28,52 +28,42 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-
 export class LoginComponent {
-
   loginForm: FormGroup;
   hidePassword = true;
+  isLoading = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
-
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-
   }
 
   onSubmit() {
-
-    if (this.loginForm.valid) {
-
-      const { email, password } = this.loginForm.value;
-
-      this.authService.login(email, password)
-        .then(() => {
-
-          alert("Login Successful");
-
-          this.router.navigate(['/dashboard']);
-
-        })
-        .catch((err: any) => {
-
-          alert("Login Failed");
-          console.error(err);
-
-        });
-
+    if (this.loginForm.invalid) {
+      return;
     }
 
+    this.isLoading = true;
+    const { email, password } = this.loginForm.value;
+
+    this.authService
+      .login(email, password)
+      .then(() => {
+        alert('Login successful');
+        this.router.navigate(['/dashboard']);
+      })
+      .catch((err: any) => {
+        alert('Login failed');
+        console.error(err);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }
-
 }

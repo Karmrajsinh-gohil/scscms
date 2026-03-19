@@ -1,27 +1,49 @@
-# Scscms
+# Smart Civic Services & Complaint Management System (SCSCMS)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+This repository now includes:
 
-## Development server
+- **Angular 17 frontend** (citizen login/register/dashboard/submit complaint)
+- **Node.js + Express backend** (MongoDB + Firebase token verification)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 1) Frontend setup
 
-## Code scaffolding
+```bash
+npm install
+npm start
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Frontend runs at `http://localhost:4200`.
 
-## Build
+## 2) Backend setup
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+cd backend
+npm install
+cp .env.example .env
+npm run dev
+```
 
-## Running unit tests
+Backend runs at `http://localhost:5000`.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## 3) Required backend environment variables
 
-## Running end-to-end tests
+Set in `backend/.env`:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- `MONGODB_URI`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
 
-## Further help
+## 4) Implemented Step 1 scope
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Firebase auth login/register (frontend)
+- Route guard for protected pages (`/dashboard`, `/submit-complaint`)
+- Submit complaint API integration
+- View "My Complaints" in dashboard
+- Backend complaint create/list-my APIs
+
+## Backend API endpoints
+
+- `GET /api/health`
+- `POST /api/complaints` (auth required)
+- `GET /api/complaints/my` (auth required)
