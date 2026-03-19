@@ -20,5 +20,10 @@ export const routes: Routes = [
   {
     path: 'submit-complaint',
     loadComponent: () => import('./client/submit-complaint/submit-complaint.component').then(m => m.SubmitComplaintComponent)
-  }
+  },
+  {
+  path: 'admin-dashboard',
+  loadComponent: () => import('./admin/admin-dashboard/admin-dashboard.component')
+    .then(m => m.AdminDashboardComponent)
+}
 ];

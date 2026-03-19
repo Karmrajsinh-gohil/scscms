@@ -1,0 +1,47 @@
+.dashboard-card {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card mat-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.dashboard-card h3 {
+  font-size: 28px;
+  margin: 5px 0;
+}
+
+.dashboard-card p {
+  font-size: 16px;
+}
+
+/* Hover Effect */
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Colors */
+.total {
+  background: linear-gradient(45deg, #007bff, #00c6ff);
+}
+
+.pending {
+  background: linear-gradient(45deg, #ffc107, #ff9800);
+}
+
+.progress {
+  background: linear-gradient(45deg, #17a2b8, #00d4ff);
+}
+
+.resolved {
+  background: linear-gradient(45deg, #28a745, #5eff8a);
+}
+
+.rejected {
+  background: linear-gradient(45deg, #dc3545, #ff6b6b);
+}
