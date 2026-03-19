@@ -1,45 +1,66 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-// Angular Material imports
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 
-// Your Navbar and Footer components
-//import { NavbarComponent } from '../../components/navbar/navbar.component';
-//import { FooterComponent } from '../../components/footer/footer.component';
+import { ComplaintService } from '../../services/complaint.service';
+import { Complaint } from '../../core/models/complaint.model';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
-    // Material Modules
     MatToolbarModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatTableModule,
-    // Your components
-    //NavbarComponent,
-    //FooterComponent
+    MatTableModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  userName = 'Gohil Karmrajsinh';
-  stats = { totalComplaints: 10, pending: 3, resolved: 5, rejected: 2 };
-  recentComplaints = [
-    { id: 1, category: 'Water', status: 'Pending', date: '2026-03-09' },
-    { id: 2, category: 'Road', status: 'Resolved', date: '2026-03-08' }
-  ];
+export class DashboardComponent implements OnInit {
+  userName = 'Citizen';
+  complaints: Complaint[] = [];
+  isLoading = true;
+
+  stats = { totalComplaints: 0, pending: 0, resolved: 0, rejected: 0 };
+
+  displayedColumns = ['id', 'category', 'status', 'date'];
+
+  constructor(private complaintService: ComplaintService) {}
+
+  ngOnInit(): void {
+    this.loadMyComplaints();
+  }
+
+  loadMyComplaints(): void {
+    this.complaintService.getMyComplaints().subscribe({
+      next: (complaints) => {
+        this.complaints = complaints;
+        this.computeStats();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private computeStats(): void {
+    this.stats.totalComplaints = this.complaints.length;
+    this.stats.pending = this.complaints.filter((c) =>
+      ['Submitted', 'Under Review', 'Assigned', 'In Progress'].includes(c.status)
+    ).length;
+    this.stats.resolved = this.complaints.filter((c) => c.status === 'Resolved').length;
+    this.stats.rejected = this.complaints.filter((c) => c.status === 'Rejected').length;
+  }
 }
