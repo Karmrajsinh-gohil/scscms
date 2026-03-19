@@ -1,79 +1,62 @@
-<!--<app-navbar></app-navbar>-->
-
 <div class="dashboard-container" style="padding: 20px;">
+  <h2>Welcome, {{ userName }}</h2>
 
-  <h2>Welcome, {{userName}}</h2>
-
-  <!-- Stats Cards -->
   <div class="stats-cards" style="display: flex; gap: 20px; flex-wrap: wrap;">
-    <mat-card class="stat-card" color="primary">
+    <mat-card class="stat-card">
       <mat-card-title>Total Complaints</mat-card-title>
-      <mat-card-content>{{stats.totalComplaints}}</mat-card-content>
+      <mat-card-content>{{ stats.totalComplaints }}</mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card" color="warn">
-      <mat-card-title>Pending</mat-card-title>
-      <mat-card-content>{{stats.pending}}</mat-card-content>
+    <mat-card class="stat-card">
+      <mat-card-title>Pending/In Progress</mat-card-title>
+      <mat-card-content>{{ stats.pending }}</mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card" color="accent">
+    <mat-card class="stat-card">
       <mat-card-title>Resolved</mat-card-title>
-      <mat-card-content>{{stats.resolved}}</mat-card-content>
+      <mat-card-content>{{ stats.resolved }}</mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card" color="warn">
+    <mat-card class="stat-card">
       <mat-card-title>Rejected</mat-card-title>
-      <mat-card-content>{{stats.rejected}}</mat-card-content>
+      <mat-card-content>{{ stats.rejected }}</mat-card-content>
     </mat-card>
   </div>
 
-  <!-- Quick Actions Buttons -->
   <div style="margin-top: 30px; display: flex; gap: 15px;">
-    <button mat-raised-button color="primary" routerLink="/submit-complaint">
-      Submit Complaint
-    </button>
-    <button mat-raised-button color="accent" routerLink="/dashboard">
-      View Complaints
-    </button>
-    <button mat-raised-button color="warn" routerLink="/profile">
-      Profile
-    </button>
+    <button mat-raised-button color="primary" routerLink="/submit-complaint">Submit Complaint</button>
+    <button mat-raised-button color="accent" (click)="loadMyComplaints()">Refresh</button>
   </div>
 
-  <!-- Recent Complaints Table -->
   <div style="margin-top: 40px;">
-    <h4>Recent Complaints</h4>
-    <table mat-table [dataSource]="recentComplaints" class="mat-elevation-z8">
+    <h4>My Complaints</h4>
 
-      <!-- ID Column -->
+    <p *ngIf="isLoading">Loading complaints...</p>
+    <p *ngIf="!isLoading && complaints.length === 0">No complaints submitted yet.</p>
+
+    <table mat-table [dataSource]="complaints" class="mat-elevation-z8" *ngIf="!isLoading && complaints.length">
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let complaint"> {{complaint.id}} </td>
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let complaint">{{ complaint._id.slice(-6) }}</td>
       </ng-container>
 
-      <!-- Category Column -->
       <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef> Category </th>
-        <td mat-cell *matCellDef="let complaint"> {{complaint.category}} </td>
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+        <td mat-cell *matCellDef="let complaint">{{ complaint.category }}</td>
       </ng-container>
 
-      <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let complaint"> {{complaint.status}} </td>
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let complaint">{{ complaint.status }}</td>
       </ng-container>
 
-      <!-- Date Column -->
       <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef> Date </th>
-        <td mat-cell *matCellDef="let complaint"> {{complaint.date}} </td>
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let complaint">{{ complaint.createdAt | date: 'mediumDate' }}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="['id','category','status','date']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['id','category','status','date'];"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
-
 </div>
-
-<!--<app-footer></app-footer>-->

@@ -30,17 +30,15 @@ import { AuthService } from '../../services/auth.service';
   ]
 })
 export class LoginComponent {
-
   loginForm: FormGroup;
   hidePassword = true;
-  isLoading = false;
-  errorMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -49,54 +47,36 @@ export class LoginComponent {
 
   // ✅ LOGIN METHOD
   onSubmit() {
+    if (this.loginForm.invalid) {
+      return;
+    }
 
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.valid) {
 
-    this.isLoading = true;
-    this.errorMessage = '';
+      const { email, password } = this.loginForm.value;
 
-    const { email, password } = this.loginForm.value;
+      this.authService.login(email, password)
+        .then(() => {
 
-    this.authService.login(email, password)
-      .then(() => {
+          alert("Login Successful");
 
-        this.isLoading = false;
-
-        const role = this.authService.getRole();
-
-        if (role === 'admin') {
-          this.router.navigate(['/admin-dashboard']);
-        } else {
           this.router.navigate(['/dashboard']);
-        }
 
-      })
-      .catch((error: any) => {
+        })
+        .catch((err: any) => {
 
-        this.isLoading = false;
-        this.errorMessage = this.getErrorMessage(error);
+          alert("Login Failed");
+          console.error(err);
 
-        console.error(error);
+        });
 
-      });
+    }
+
   }
 
   // ✅ PASSWORD TOGGLE
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
-  }
-
-  // ✅ ERROR HANDLING
-  private getErrorMessage(error: any): string {
-    if (error.code === 'auth/user-not-found') {
-      return 'User not found';
-    } else if (error.code === 'auth/wrong-password') {
-      return 'Incorrect password';
-    } else if (error.code === 'auth/invalid-email') {
-      return 'Invalid email format';
-    } else {
-      return 'Login failed. Please try again.';
-    }
   }
 
 }
